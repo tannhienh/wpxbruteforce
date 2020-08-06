@@ -3,7 +3,7 @@
  * Date: August 6, 2020
  * Vendor Homepage: https://wordpress.org/
  * Author: xblackey
- * Version: 1.0
+ * Version: 1.1
  */
 #include <iostream>
 #include <fstream>
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         {
             curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
-            double count = 0;
+            unsigned int count = 0;
             bool found = false;
             const char *check_fail = "faultString";
             const char *fail_code = "403";
