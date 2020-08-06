@@ -11,10 +11,10 @@ Display: 'XML-RPC server accepts POST requests only.'
 `$ g++ wpxbruteforce.cpp -o wpxbruteforce -lcurl`
 
 ## Run:
-`$ wpxbruteforce [url/xmlrpc.php] [usernames file] [passwords file]`
+`$ ./wpxbruteforce [url/xmlrpc.php] [usernames file] [passwords file]`
 
 ---
 
 example:
 
-`$ wpxbruteforce https://example.com/xmlrpc.php usernames.txt passwords.txt`
+`$ ./wpxbruteforce https://example.com/xmlrpc.php usernames.txt passwords.txt`
