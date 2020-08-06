@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
         std::string post_str;
         std::string post1 = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><methodCall><methodName>wp.getUsers</methodName><params><param><value>1</value></param><param><value>";
-        std::string username = argv[2];
+        std::string username;
         std::string post2 = "</value></param><param><value>";
         std::string password;
         std::string post3 = "</value></param></params></methodCall>";
