@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     {
         std::cout << "Error open this file: " << usersFilePath << std::endl;
     }
-    else if (!pwFilePath)
+    else if (!passwords_file)
     {
         std::cout << "Error open this file: " << pwFilePath << std::endl;
     }
