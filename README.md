@@ -1,4 +1,4 @@
-# Brute force wordpress websites with xmlrpc enabled
+# Brute force wordpress websites with xmlrpc is enabled
 
 wpxbruteforce 1.2.0 (c) 2022 by Xblackey
 
